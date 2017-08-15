@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-#define MAX_DIGITS 100
+#define MAX_DIGITS 500
 
 
 namespace aifuture{
@@ -18,7 +18,7 @@ private:
         BigInt result;
         result.sign = 1;
         int i = 0;
-        for (i = 0; i < 100 && i < max_len; ++i) {
+        for (i = 0; i < max_len; ++i) {
             int val = a.digits[i] + b.digits[i] + carry;
             result.digits[i] = val % 10;
             carry = val / 10;
@@ -72,14 +72,53 @@ private:
         }
         return result;
     }
-    BigInt basic_divide(const BigInt& a, const BigInt& b) const {
-        BigInt result;
-        BigInt current(a);
-        for (int i = 0; current.len > 1 || current.digits[0] > 0; ++i) {
-            current = current - b;
-            result = result + 1;
+    void shift10_down(int K) {
+        for (int i = K; i < len; ++i) {
+            digits[i - K] = digits[i];
         }
-        return result;
+        for (int i = std::max(0, len - K); i < len; ++i) digits[i] = 0;
+        len = std::max(len - K, 1);
+        return;
+    }
+    void shift10_up(int K) {
+        if (K + len >= MAX_DIGITS) 
+            throw std::out_of_range( "Result out of range" );
+        for (int i = K + len - 1; i >= 0; --i) {
+            int val = i >= K? digits[i - K]:0;
+            digits[i] = val;
+        }
+        len += K;
+        return;
+    }
+    // Newton–Raphson division
+    BigInt NR_divide(const BigInt& a, const BigInt& b) const {
+        int sign = a.sign * b.sign;
+        int precision_len = MAX_DIGITS / 4;
+        BigInt X(1);
+        X.shift10_up(precision_len);
+        int M = MAX_DIGITS;
+        while (M-- > 0) {
+            //std::cout << "iter:" << M << std::endl;
+            //X.print();
+
+            BigInt pX(X);
+            pX.shift10_down(precision_len);
+            BigInt newX(1);
+            newX.shift10_up(precision_len);
+            newX = absolute_sub(newX, b * pX);
+            newX = newX * pX;
+            X = X + newX;
+        }
+        X = X * a;
+        X.shift10_down(2 * precision_len);
+        X.sign = a.sign * b.sign;
+        // Remove zeros
+        while (X.len > 1) {
+            if (X.digits[X.len - 1] > 0) break;
+            --X.len;
+        }
+            
+        return X;
     }
     
     
@@ -180,7 +219,8 @@ public:
         return result;
     }
     BigInt operator /(const BigInt& b) const {
-        BigInt result = basic_divide(*this, b);
+        //BigInt result = basic_divide(*this, b);
+        BigInt result = NR_divide(*this, b);
         return result;
     }
 

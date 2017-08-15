@@ -7,13 +7,23 @@ using namespace aifuture;
 
 
 int test_longlong() {
-    int L = -1000;
-    int R = 1000;
-    for (int i = L; i < R; ++i)
+    int L = -100;
+    int R = 100;
+    for (int i = L; i < L + 2; ++i)
         for (int j = L; j < R; ++j) {
             BigInt a(i);
             BigInt b(j);
-            auto c = a / b;
+            BigInt c;
+            if (j == 0) continue;
+            try {
+                c = a / b;
+            } catch (...) {
+                cout << "Out of range ERROR!";
+                cout << i;
+                cout << " + ";
+                cout << j << endl;
+                continue;
+            }
             long long result = i / j;
             if (c.to_longlong() != result) {
                 cout << "ERROR!";
@@ -30,13 +40,14 @@ int test_longlong() {
     return 0;
 }
 int main() {
-    BigInt a((long long)100);
-    BigInt b((long long)5LL);
+    BigInt a((long long)-100023);
+    BigInt b((long long)-100023LL);
     //BigInt a((long long)9223372036854775807LL);
-    auto c = a / b;
 
     a.print();
     b.print();
+
+    auto c = a / b;
     c.print();
 
     test_longlong();
