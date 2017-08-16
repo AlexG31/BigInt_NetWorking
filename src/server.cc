@@ -65,6 +65,13 @@ void UDP_send(int sockfd, struct sockaddr_storage their_addr, unsigned int froml
 	buf[numbytes] = '\0';
 	printf("listener: packet contains \"%s\"\n", buf);
 
+    // Send data to client
+	if ((numbytes = sendto(sockfd, "abc", 3, 0,
+			 (struct sockaddr *)&their_addr, addr_len)) == -1) {
+		perror("talker: sendto");
+		exit(1);
+	}
+
 }
 
 int main(int argv, char*argc[])
