@@ -66,7 +66,8 @@ void UDP_send(int sockfd, struct sockaddr_storage their_addr, unsigned int froml
 	printf("listener: packet contains \"%s\"\n", buf);
 
     // Send data to client
-	if ((numbytes = sendto(sockfd, "abc", 3, 0,
+    char msg[] = "UDP data from server";
+	if ((numbytes = sendto(sockfd, msg, strlen(msg), 0,
 			 (struct sockaddr *)&their_addr, addr_len)) == -1) {
 		perror("talker: sendto");
 		exit(1);
@@ -76,6 +77,10 @@ void UDP_send(int sockfd, struct sockaddr_storage their_addr, unsigned int froml
 
 int main(int argv, char*argc[])
 {
+    if (argv < 2) {
+        printf("Input format: [TCP/UDP]\n");
+        exit(0);
+    }
     int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
     struct addrinfo hints, *servinfo, *p;
     struct sockaddr_storage their_addr; // connector's address information
@@ -89,11 +94,13 @@ int main(int argv, char*argc[])
     hints.ai_family = AF_UNSPEC;
 
     // TCP
-    //hints.ai_socktype = SOCK_STREAM;
-    //UDP
-    hints.ai_socktype = SOCK_DGRAM;
+    if (strcmp(argc[1], "TCP") == 0) {
+        hints.ai_socktype = SOCK_STREAM;
+    } else if (strcmp(argc[1], "UDP") == 0) {
+        //UDP
+        hints.ai_socktype = SOCK_DGRAM;
+    } 
     hints.ai_flags = AI_PASSIVE; // use my IP
-    //hints.addr_serv.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
