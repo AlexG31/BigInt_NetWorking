@@ -11,6 +11,9 @@ int test_longlong() {
     int R = 100;
     for (int i = L; i < L + 2; ++i)
         for (int j = L; j < R; ++j) {
+            if (j % 10 == 0) {
+                cout << "j = " << j << endl;
+            }
             BigInt a(i);
             BigInt b(j);
             BigInt c;
