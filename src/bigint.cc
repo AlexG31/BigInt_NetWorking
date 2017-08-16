@@ -86,14 +86,11 @@ void aifuture::BigInt::shift10_up(int K) {
 // Newton–Raphson division
 aifuture::BigInt aifuture::BigInt::NR_divide(const aifuture::BigInt& a, const aifuture::BigInt& b) const {
     int sign = a.sign * b.sign;
-    int precision_len = MAX_DIGITS / 4;
+    int precision_len = std::max(a.len, b.len) * 2;
     aifuture::BigInt X(1);
     X.shift10_up(precision_len);
     int M = MAX_DIGITS;
     while (M-- > 0) {
-        //std::cout << "iter:" << M << std::endl;
-        //X.print();
-
         aifuture::BigInt pX(X);
         pX.shift10_down(precision_len);
         aifuture::BigInt newX(1);

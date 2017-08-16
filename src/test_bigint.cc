@@ -7,8 +7,8 @@ using namespace aifuture;
 
 
 int test_longlong() {
-    int L = -100;
-    int R = 100;
+    int L = -9999;
+    int R = 9999;
     for (int i = L; i < L + 2; ++i)
         for (int j = L; j < R; ++j) {
             if (j % 10 == 0) {
@@ -31,7 +31,7 @@ int test_longlong() {
             if (c.to_longlong() != result) {
                 cout << "ERROR!";
                 cout << i;
-                cout << " + ";
+                cout << " / ";
                 cout << j << endl;
                 cout << c.to_longlong() << endl;
                 return -1;
@@ -43,15 +43,15 @@ int test_longlong() {
     return 0;
 }
 int main() {
-    BigInt a((long long)-100023);
-    BigInt b((long long)-100023LL);
-    //BigInt a((long long)9223372036854775807LL);
+    //BigInt a((long long)-100023);
+    //BigInt b((long long)-100023LL);
+    ////BigInt a((long long)9223372036854775807LL);
 
-    a.print();
-    b.print();
+    //a.print();
+    //b.print();
 
-    auto c = a / b;
-    c.print();
+    //auto c = a / b;
+    //c.print();
 
     test_longlong();
     return 0;

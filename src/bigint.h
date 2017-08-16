@@ -6,8 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-#define MAX_DIGITS 500
-
+#define MAX_DIGITS 900
 
 namespace aifuture{
 class BigInt {
